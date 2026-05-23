@@ -3,7 +3,7 @@ const ClothingItem = require("../models/clothingItem");
 const createItem = (req, res) => {
   const { name, weather, imageURL } = req.body;
 
-  ClothingItem.create({ name, weather, iamgeURL })
+  ClothingItem.create({ name, weather, imageURL })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
@@ -39,7 +39,7 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
+    .then((item) => res.status(204).send(item))
     .catch((err) => {
       res.status(500).send({ message: err });
     });
