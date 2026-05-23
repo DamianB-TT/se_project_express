@@ -1,16 +1,18 @@
 const User = require("../models/user");
 
-const INTERNAL_SERVER_ERROR_CODE = 500;
-const BAD_REQUEST_CODE = 400;
-const NOT_FOUND_CODE = 404;
-const CREATED_CODE = 201;
-const OK_CODE = 200;
+const {
+  BAD_REQUEST_STATUS_CODE,
+  NOT_FOUND_STATUS_CODE,
+  INTERNAL_SERVER_ERROR_STATUS_CODE,
+  CREATED_STATUS_CODE,
+  OK_STATUS_CODE,
+} = require("../utils/error");
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(OK_CODE).send(users))
+    .then((users) => res.status(OK_STATUS_CODE).send(users))
     .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR_CODE).send({
+      res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
         message: "An error has occurred on the server",
       })
     );
@@ -20,15 +22,17 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(CREATED_CODE).send(user))
+    .then((user) => res.status(CREATED_STATUS_CODE).send(user))
     .catch((err) => {
       console.error(err);
 
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST_CODE).send({ message: err.message });
+        return res
+          .status(BAD_REQUEST_STATUS_CODE)
+          .send({ message: err.message });
       }
 
-      return res.status(INTERNAL_SERVER_ERROR_CODE).send({
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
         message: "An error has occurred on the server",
       });
     });
@@ -39,23 +43,23 @@ const getUser = (req, res) => {
 
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(OK_CODE).send(user))
+    .then((user) => res.status(OK_STATUS_CODE).send(user))
     .catch((err) => {
       console.error(err);
 
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND_CODE).send({
+        return res.status(NOT_FOUND_STATUS_CODE).send({
           message: "User not found",
         });
       }
 
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST_CODE).send({
+        return res.status(BAD_REQUEST_STATUS_CODE).send({
           message: "Invalid user id",
         });
       }
 
-      return res.status(INTERNAL_SERVER_ERROR_CODE).send({
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
         message: "An error has occurred on the server",
       });
     });
