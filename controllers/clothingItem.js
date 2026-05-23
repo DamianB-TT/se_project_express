@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
@@ -9,103 +10,100 @@ const createItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
       }
-
-      return res.status(500).send({ message: err.message });
+      res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => {
+      res.status(500).send({ message: "Internal Server Error" });
+    });
 };
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
   const { imageUrl } = req.body;
 
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item id" });
+  }
+
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $set: { imageUrl } },
+    { imageUrl },
     { new: true, runValidators: true }
   )
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
-      }
-
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item id" });
-      }
-
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-
-      return res.status(500).send({ message: err.message });
+      res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item id" });
+  }
+
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then(() => res.status(200).send({ message: "Item deleted" }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item id" });
-      }
-
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-
-      return res.status(500).send({ message: err.message });
+      res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
 const likeItem = (req, res) => {
+  const { itemId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item id" });
+  }
+
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item id" });
-      }
-
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-
-      return res.status(500).send({ message: err.message });
+      res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
 const dislikeItem = (req, res) => {
+  const { itemId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(400).send({ message: "Invalid item id" });
+  }
+
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid item id" });
-      }
-
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-
-      return res.status(500).send({ message: err.message });
+      res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
