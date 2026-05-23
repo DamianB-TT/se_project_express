@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 
-const createItem = (req, res) => {
-  const { name, weather, imageUrl } = req.body;
-
-  return ClothingItem.create({ name, weather, imageUrl })
+const createItem = (req, res) =>
+  ClothingItem.create({
+    name: req.body.name,
+    weather: req.body.weather,
+    imageUrl: req.body.imageUrl,
+  })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -12,15 +14,11 @@ const createItem = (req, res) => {
       }
       return res.status(500).send({ message: "Internal Server Error" });
     });
-};
 
-const getItems = (req, res) => {
-  return ClothingItem.find({})
+const getItems = (req, res) =>
+  ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch(() => {
-      return res.status(500).send({ message: "Internal Server Error" });
-    });
-};
+    .catch(() => res.status(500).send({ message: "Internal Server Error" }));
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
