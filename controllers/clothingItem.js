@@ -23,26 +23,25 @@ const createItem = (req, res) => {
     owner: req.user._id,
   })
     .then((item) => res.status(201).send(item))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Invalid data provided for clothing item",
-        });
-      }
-      return res.status(500).send({
-        message: "An error has occurred on the server",
-      });
-    });
+    .catch((err) =>
+      err.name === "ValidationError"
+        ? res.status(400).send({
+            message: "Invalid data provided for clothing item",
+          })
+        : res.status(500).send({
+            message: "An error has occurred on the server",
+          })
+    );
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch(() => {
-      return res.status(500).send({
+    .catch(() =>
+      res.status(500).send({
         message: "An error has occurred on the server",
-      });
-    });
+      })
+    );
 };
 
 const deleteItem = (req, res) => {
@@ -61,16 +60,15 @@ const deleteItem = (req, res) => {
         message: "Item successfully deleted",
       })
     )
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({
-          message: "No item found with the provided id",
-        });
-      }
-      return res.status(500).send({
-        message: "An error has occurred on the server",
-      });
-    });
+    .catch((err) =>
+      err.name === "DocumentNotFoundError"
+        ? res.status(404).send({
+            message: "No item found with the provided id",
+          })
+        : res.status(500).send({
+            message: "An error has occurred on the server",
+          })
+    );
 };
 
 const likeItem = (req, res) => {
@@ -89,16 +87,15 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => res.status(200).send(item))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({
-          message: "No item found with the provided id",
-        });
-      }
-      return res.status(500).send({
-        message: "An error has occurred on the server",
-      });
-    });
+    .catch((err) =>
+      err.name === "DocumentNotFoundError"
+        ? res.status(404).send({
+            message: "No item found with the provided id",
+          })
+        : res.status(500).send({
+            message: "An error has occurred on the server",
+          })
+    );
 };
 
 const dislikeItem = (req, res) => {
@@ -117,16 +114,15 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => res.status(200).send(item))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({
-          message: "No item found with the provided id",
-        });
-      }
-      return res.status(500).send({
-        message: "An error has occurred on the server",
-      });
-    });
+    .catch((err) =>
+      err.name === "DocumentNotFoundError"
+        ? res.status(404).send({
+            message: "No item found with the provided id",
+          })
+        : res.status(500).send({
+            message: "An error has occurred on the server",
+          })
+    );
 };
 
 module.exports = {
