@@ -4,21 +4,21 @@ const ClothingItem = require("../models/clothingItem");
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  return ClothingItem.create({ name, weather, imageUrl })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: err.message });
       }
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
 const getItems = (req, res) => {
-  ClothingItem.find({})
+  return ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch(() => {
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
@@ -30,7 +30,7 @@ const updateItem = (req, res) => {
     return res.status(400).send({ message: "Invalid item id" });
   }
 
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { imageUrl },
     { new: true, runValidators: true }
@@ -41,7 +41,7 @@ const updateItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
@@ -52,14 +52,14 @@ const deleteItem = (req, res) => {
     return res.status(400).send({ message: "Invalid item id" });
   }
 
-  ClothingItem.findByIdAndDelete(itemId)
+  return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then(() => res.status(200).send({ message: "Item deleted" }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
@@ -70,7 +70,7 @@ const likeItem = (req, res) => {
     return res.status(400).send({ message: "Invalid item id" });
   }
 
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
@@ -81,7 +81,7 @@ const likeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
@@ -92,7 +92,7 @@ const dislikeItem = (req, res) => {
     return res.status(400).send({ message: "Invalid item id" });
   }
 
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -103,7 +103,7 @@ const dislikeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(500).send({ message: "Internal Server Error" });
+      return res.status(500).send({ message: "Internal Server Error" });
     });
 };
 
