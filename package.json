@@ -1,0 +1,23 @@
+{
+  "name": "se_project_express",
+  "version": "0.1.0",
+  "description": "WTWR backend using express",
+  "homepage": "https://github.com/DamianB-TT/se_project_express#readme",
+  "bugs": {
+    "url": "https://github.com/DamianB-TT/se_project_express/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DamianB-TT/se_project_express.git"
+  },
+  "license": "ISC",
+  "author": "Damian Byrd",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  }
+}
