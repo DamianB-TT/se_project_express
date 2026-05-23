@@ -1,11 +1,21 @@
 const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 
-const createItem = (req, res) =>
-  ClothingItem.create({
-    name: req.body.name,
-    weather: req.body.weather,
-    imageUrl: req.body.imageUrl,
+const createItem = (req, res) => {
+  const { name, weather, imageUrl } = req.body;
+
+  if (!name || !weather || !imageUrl) {
+    return res.status(400).send({ message: "Missing required fields" });
+  }
+
+  if (name.length < 2 || name.length > 30) {
+    return res.status(400).send({ message: "Invalid name length" });
+  }
+
+  return ClothingItem.create({
+    name,
+    weather,
+    imageUrl,
   })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
@@ -14,6 +24,7 @@ const createItem = (req, res) =>
       }
       return res.status(500).send({ message: "Internal Server Error" });
     });
+};
 
 const getItems = (req, res) =>
   ClothingItem.find({})
