@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST_STATUS_CODE,
+  FORBIDDEN_STATUS_CODE,
   NOT_FOUND_STATUS_CODE,
   INTERNAL_SERVER_ERROR_STATUS_CODE,
   CREATED_STATUS_CODE,
@@ -60,22 +61,34 @@ const deleteItem = (req, res) => {
     });
   }
 
-  return ClothingItem.findByIdAndDelete(itemId)
+  return ClothingItem.findById(itemId)
     .orFail()
-    .then(() =>
-      res.status(OK_STATUS_CODE).send({
-        message: "Item successfully deleted",
-      })
-    )
-    .catch((err) =>
-      err.name === "DocumentNotFoundError"
-        ? res.status(NOT_FOUND_STATUS_CODE).send({
-            message: "No item found with the provided id",
-          })
-        : res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
-            message: "An error has occurred on the server",
-          })
-    );
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res.status(FORBIDDEN_STATUS_CODE).send({
+          message: "You do not have permission to delete this item",
+        });
+      }
+
+      return item.deleteOne().then(() =>
+        res.status(OK_STATUS_CODE).send({
+          message: "Item successfully deleted",
+        })
+      );
+    })
+    .catch((err) => {
+      console.error(err);
+
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND_STATUS_CODE).send({
+          message: "No item found with the provided id",
+        });
+      }
+
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
+        message: "An error has occurred on the server",
+      });
+    });
 };
 
 const likeItem = (req, res) => {

@@ -10,7 +10,7 @@ function print_orange() {
 	echo -e "\e[33m$@\e[0m"
 }
 
-SPRINT_NUMBER=12
+SPRINT_NUMBER=13
 
 if [ ! -f sprint.txt ]; then
   print_red "There should be a file 'sprint.txt' in the root folder!"
