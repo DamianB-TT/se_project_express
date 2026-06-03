@@ -13,20 +13,16 @@ const {
   OK_STATUS_CODE,
 } = require("../utils/error");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(OK_STATUS_CODE).send(users))
-    .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
-        message: "An error has occurred on the server",
-      })
-    );
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
-  bcrypt
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST_STATUS_CODE)
+      .send({ message: "Invalid data provided for user" });
+  }
+
+  return bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
@@ -46,7 +42,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: err.message });
+          .send({ message: "Invalid data provided for user" });
       }
 
       return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
@@ -105,7 +101,7 @@ const updateUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST_STATUS_CODE)
-          .send({ message: err.message });
+          .send({ message: "Invalid data provided for user" });
       }
 
       return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
@@ -134,10 +130,16 @@ const login = (req, res) => {
     .catch((err) => {
       console.error(err);
 
-      res
-        .status(UNAUTHORIZED_STATUS_CODE)
-        .send({ message: "Incorrect email or password" });
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED_STATUS_CODE)
+          .send({ message: "Incorrect email or password" });
+      }
+
+      return res.status(INTERNAL_SERVER_ERROR_STATUS_CODE).send({
+        message: "An error has occurred on the server",
+      });
     });
 };
 
-module.exports = { getUsers, createUser, getCurrentUser, updateUser, login };
+module.exports = { createUser, getCurrentUser, updateUser, login };
