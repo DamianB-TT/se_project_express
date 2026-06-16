@@ -38,7 +38,7 @@ WTWR is a RESTful API server built with Node.js and Express that powers the "Wha
 
 ## Project Pitch Video
 
-<!-- TODO: Add project pitch video link here -->
+Check out [this video](https://www.loom.com/share/4554070588ec44ef8710177bd9a64b1d), where I describe the full-stack project and some challenges I faced while building it.
 
 ## Project Structure
 
