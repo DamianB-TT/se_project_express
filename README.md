@@ -31,10 +31,14 @@ WTWR is a RESTful API server built with Node.js and Express that powers the "Wha
 - **Git & GitHub** — Version control
 - **GitHub Actions** — Automated testing on push
 
+## Links
+
+- **Backend domain**: https://api.wtwr-damian.jumpingcrab.com
+- **Frontend GitHub repo**: https://github.com/DamianB-TT/se_project_react
+
 ## Project Pitch Video
 
-Check out [this video](https://www.loom.com/share/8ebd1d47361e49ec9d143b81d6e5a354), where I describe my
-project and some challenges I faced while building it.
+<!-- TODO: Add project pitch video link here -->
 
 ## Project Structure
 
